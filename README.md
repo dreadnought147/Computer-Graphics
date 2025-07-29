@@ -1,72 +1,30 @@
 # Computer Graphics and Visualization
 
-A comprehensive university-level course covering foundational to advanced topics in computer graphics and visualization. This course combines theory with practical applications, equipping students with the skills to build and understand modern graphics systems.
+University-level course covering core and advanced topics in computer graphics. Focus areas include geometric modeling, transformations, lighting, shading, texture mapping, rasterization, ray tracing, and real-time rendering.
+
+Technologies used: OpenGL, WebGL, GLSL, C++, JavaScript.
 
 ---
 
-## Course Overview
+## Topics Covered
 
-This course explores:
-
-- **Fundamentals of Computer Graphics**
-  - Pixels, framebuffers, color spaces, raster vs vector
-- **Graphics Programming**
-  - OpenGL (C++) and WebGL (JavaScript)
-  - Shader programming (GLSL)
-- **Geometric Modeling**
-  - Primitives (points, lines, polygons)
-  - Mesh structures
-- **Transformations & Viewing**
-  - Model, View, Projection matrices
-  - Camera systems and view frustums
-- **Lighting and Shading**
-  - Phong and Blinn-Phong models
-  - Normals, diffuse and specular lighting
-- **Texture Mapping**
-  - UV coordinates, filtering, mipmaps
-- **Rendering Techniques**
-  - Rasterization pipeline
-  - Ray tracing and ray marching
-  - Shadow computation, reflections, refractions
-- **Advanced Topics**
-  - Physically Based Rendering (PBR)
-  - Real-time rendering
-  - Volumetric effects, global illumination
+- Graphics pipeline fundamentals  
+- 2D and 3D transformations  
+- OpenGL/WebGL programming  
+- Shading and lighting models  
+- Texture mapping  
+- Rasterization & Ray Tracing  
+- Physically Based Rendering (PBR)  
+- Real-time rendering techniques  
 
 ---
 
-##  Tools & Languages
+## Projects
 
--
-
----
-
-## Learning Outcomes
-
-By the end of the course, students will:
-
-- Understand the graphics pipeline and rendering process.
-- Implement transformations, shading, and lighting models.
-- Build interactive 3D visualizations and simulations.
-- Apply real-time rendering techniques and physically-based models.
-- Gain foundational knowledge for careers in:
-  - Game Development
-  - Animation and VFX
-  - Scientific Visualization
-  - Virtual/Augmented Reality
+- (to be populated)
 
 ---
 
-##  Projects
+## Skills Gained
 
-
-
-
----
-
-##  Prerequisites
-
-- Linear algebra (matrices, vectors, transformations)
-- Basic C++ or JavaScript programming
-- Optional: Familiarity with shaders and graphics APIs
-
+*(To be populated)*
