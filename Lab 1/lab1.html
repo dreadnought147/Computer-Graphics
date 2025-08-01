@@ -1,0 +1,61 @@
+    
+    <html>
+    <head>
+    <title>Page Title</title>
+    </head>
+    <script>
+            var c;
+        var g;
+        // g.strokeStyle = "rgb(0,0,0)";
+        //   // Sets the fillStyle to red
+        //  g.fillStyle = "#ff0000";
+     
+
+        function init(){
+            c = document.getElementById("myCanvas");
+            g = c.getContext("2d");
+        //        g.beginPath();
+        // g.moveTo(0, 0);
+        // g.lineTo(500, 500);
+        // // g.stroke();
+        // // g.moveTo(500,500);
+        // g.lineTo(500,0)
+        // g.stroke()
+        axes()
+
+        function axes(){
+            origin = [300,300];
+            const cord = 300;
+            console.log(origin)
+            g.beginPath();
+            for (let i =-1; i<=1; i++){
+            g.moveTo(300,300)
+            g.lineTo(origin[0]+300*i,300)
+            g.moveTo(300,300)
+            g.lineTo(600,300)
+            g.stroke()
+            }
+          
+
+
+        }
+            // alert("The init func ran after the onload was succesful")
+        }
+
+    
+    </script>
+    <body onload="init()">
+    <h1>My Heading</h1>
+    <p>This is a very basic webpage.</p>
+    <canvas id="myCanvas" width="600" height="600"
+                style="border:1px solid #d3d3d3;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    </body>
+    <script>
+// alert("WHere does this second alert")
+   // </script>
+    </html>
+
+<!-- 1.The HTML5 canvas provides a context object 
+ that we can use to draw to draw on the canvas -->
