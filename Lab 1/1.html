@@ -1,0 +1,173 @@
+    
+    <html>
+    <head>
+    <title>Page Title</title>
+    </head>
+    <link rel="stylesheet" href="./lab1.css">
+    <script>
+        var c;
+        var g;
+       let radius;
+     let d = new Date();
+     
+     function drawHands(d){
+        let hours = d.getHours();
+        let minutes = d.getMinutes();
+        let seconds = d.getSeconds()
+        let milis = d.getMilliseconds();
+g.strokeStyle="rgb(255,255,0)"
+        g.beginPath();
+
+
+    // hour hand
+    //conversion
+    let hourAngle = ((hours + minutes / 60) * (2 * Math.PI / 12)) - Math.PI / 2; // understand the maths
+    let minAngle = ((minutes + seconds / 60) * (2 * Math.PI / (60))) - Math.PI / 2; // understand the maths
+let secAngle = ((seconds+milis/1000) * (2 * Math.PI / 60)) - Math.PI / 2;
+    //12 --> 0
+
+    g.moveTo(300,300);
+    g.lineTo(300+(240-120)*Math.cos(hourAngle),300+(240-120)*Math.sin(hourAngle))
+
+      g.moveTo(300,300);
+    g.lineTo(300+(240-50)*Math.cos(minAngle),300+(240-50)*Math.sin(minAngle))
+
+      g.moveTo(300,300);
+    g.lineTo(300+(240-20)*Math.cos(secAngle),300+(240-20)*Math.sin(secAngle))
+
+    g.stroke()
+
+     }
+
+function Grid(){
+    
+            //dynamically
+
+            const spacing = 60;
+             g.strokeStyle = "rgb(0,0,0)";
+                g.beginPath();
+                //Draw vert ;lines
+            for (let i =0; i<=c.width; i=i+spacing){
+                g.moveTo(i,0);
+                g.lineTo(i, c.height);
+            }
+              for (let i =0; i<=c.height; i=i+spacing){
+                g.moveTo(0,i);
+                g.lineTo(c.width,i);
+            }
+            g.stroke();
+        }
+        function axes(){
+            g.strokeStyle="rgb(255,0,0)"
+
+            g.beginPath()
+            g.moveTo(300,600)
+            g.lineTo(300,0)
+
+             g.moveTo(0,300)
+            g.lineTo(600,300)
+
+            g.stroke();
+
+        }
+
+function drawCircle(r){
+    radius= r;
+  const cx =300;
+  const cy =300;
+  g.strokeStyle = "rgb(0,0,0)"
+
+  g.beginPath();
+  for (let angle=0; angle<=2*Math.PI;angle+=0.01){
+    const x = cx+r*Math.cos(angle);
+    const y = cy+r*Math.sin(angle);
+
+    if (angle===0){
+        g.moveTo(x,y);
+    }
+    else{
+        g.lineTo(x,y)
+    }
+
+   
+  }
+   g.stroke()
+
+}
+function drawTime(r = radius){
+    g.strokeStyle="rgb(0,0,255)"
+    g.beginPath();
+  for (let angle=0; angle<=2*Math.PI;angle+=(1/6)*Math.PI){
+  
+    const x = 300+(r-10)*Math.cos(angle);
+    const y = 300+(r-10)*Math.sin(angle);
+
+    const x0= 300 + (r-40)*Math.cos(angle)
+    const y0=300+ (r - 40) * Math.sin(angle);
+    g.moveTo(x0,y0);
+    g.lineTo(x,y)
+ 
+  }
+   g.stroke()
+
+}
+function drawTicks(r = radius){
+    g.strokeStyle="rgb(0,0,255)"
+    g.beginPath();
+  for (let angle=0; angle<=2*Math.PI;angle+=(1/30)*Math.PI){
+  
+    const x = 300+(r)*Math.cos(angle);
+    const y = 300+(r)*Math.sin(angle);
+
+    const x0= 300 + (r-7)*Math.cos(angle)
+    const y0=300+ (r - 7) * Math.sin(angle);
+    g.moveTo(x0,y0);
+    g.lineTo(x,y)
+ 
+  }
+   g.stroke()
+
+}
+
+        function init(){
+            console.log("object");
+            c = document.getElementById("myCanvas");
+            g = c.getContext("2d");
+         g.fillStyle = "#ff0000";
+       // Grid();
+       // axes()
+       // drawCircle(240)
+        //drawTime()
+       // drawTicks()
+        document.getElementById("subhead").innerHTML =d;
+        setInterval(drawClock, 16); // ~60fps  
+       // drawHands(d)
+        }
+
+    function drawClock(){
+        g.clearRect(0,0,c.width,c.height);
+      //  Grid();
+      //  axes();
+        drawCircle(240);
+        drawTime()
+        drawTicks()
+        let d = new Date();
+        drawHands(d);
+       // requestAnimationFrame(drawClock)// call recurislevy under this raf function
+    }
+    </script>
+    <body style="background-color: black;"onload="init()">
+    <h1 >My Heading</h1>
+    <p id="subhead">This is a very basic webpage.</p>
+    <canvas id="myCanvas" width="600" height="600"
+                style="border:1px solid #d3d3d3;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    </body>
+    <script>
+ //alert("WHere does this second alert")
+   // </script>
+    </html>
+
+<!-- 1.The HTML5 canvas provides a context object 
+ that we can use to draw to draw on the canvas -->
