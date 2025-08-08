@@ -11,7 +11,7 @@
         background-color: #DDDDDD;
     }
     canvas {
-        background-color: white;
+        background-color: rgb(255, 255, 255);
         display: block;
     }
     #canvasholder {
@@ -37,8 +37,9 @@
      */
     function draw() {
     
-        graphics.clearRect(0,0,600,600);        
+       // graphics.clearRect(0,0,600,600);        
         // TODO: insert code to draw the image for Exercise 1!
+
 
     }
     
@@ -158,6 +159,7 @@
            this.restore();
            this.stroke();
         }
+        
         graphics.getRGB = function(x,y) {
             var color = this.getImageData(x,y,1,1);
             return color.data;
@@ -181,7 +183,116 @@
                "An error occurred while initializing graphics.";
         }
         addGraphicsContextExtras(graphics);
+        
+        graphics.strokeLine(300,0,300,600);
+        graphics.strokeLine(0,300,600,300);
+       //debugger
+// 1st cell
+  for (var i = 1; i < 300 / 21.42; i++) {
+    console.log(i);
+    const space = 10;
+    const width = 260;
+    const height = 10;
+
+    const x1 =20;
+    const y1 = i * (height + space);
+    const x2 = x1 + width;
+    const y2 = y1 + height;
+
+    graphics.strokePoly(
+        x1, y1,        // top-left
+        x2, y1,        // top-right
+        x2, y2,        // bottom-right
+        x1, y2         // bottom-left
+    );
+    graphics.strokeStyle = "rgb(255,175,50)"
+    graphics.fillStyle = "rgb(255,175,50)"
+    graphics.fillPoly(
+        x1, y1,        // top-left
+        x2, y1,        // top-right
+        x2, y2,        // bottom-right
+        x1, y2         // bottom-left
+    );
+}
+//2nd cell
+graphics.strokeStyle = "rgb(0,0,255)";
+    graphics.fillStyle = "rgb(0,0,255)";
+    
+    const wid = 200;
+    const hei = 200;
+
+    const cell2x = 300;
+    const cell2y = 0;
+
+    const x1 = cell2x+50;
+    const y1 = 50;
+
+    const x2 = 50+wid+cell2x;
+    const y2 = hei+50;
+   const trianglecoords = [
+        (300+150),50+100,
+        (300+50), (50+200),
+        (300+250), (50+200)
+       ];
+       graphics.fillPoly(
+        x1, y1,        // top-left
+        x2, y1, // top-right
+        x2, y2,        // bottom-right
+        (300+150),50+100, // trian peak
+        x1, y2 ,
+                // bottom-left
+    );
+
+
+    // develo way to work in a certain coords
+
+    // now ovals in (0, 300)
+    const globy = 300;
+    const globx = 0;
+
+    const hr = 68/2;
+   const  vr =44/2;
+
+
+const colors = [
+  "rgb(204, 51, 102)",     // darkish pink
+  "rgb(64, 224, 250)",     // turquoise
+  "rgb(154, 250, 50)",     // yellow green
+  "rgb(255, 255, 0)",      // yellow
+  "rgb(255, 0, 0)"       // red
+];
+
+    for (var i=0;i<5;i++){
+        graphics.fillStyle = colors[i]
+        graphics.strokeStyle = "rgb(0,0,0)";
+graphics.strokeOval(150,((30+24)+((vr*2))*i)+globy,
+              hr+(25*i),     // hr
+                vr
+)
+graphics.fillOval(150,((30+24)+((vr*2))*i)+globy,
+              hr+(25*i),     // hr
+                vr
+)
+
+
+
+    }
+    
+
+
+
+ 
+graphics.strokeStyle = "rgb(255,255,255)";
+    graphics.fillStyle = "rgb(255,255,255)";
+
+       graphics.strokePoly(...trianglecoords)
+
+
+
         draw();  // Call draw() to draw on the canvas.
+    }
+    function drawAxes(){
+
     }
     
 </script>
