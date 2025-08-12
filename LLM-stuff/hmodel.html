@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Hierarchical Model — Multi-Joint Arm (Canvas)</title>
+  <style>
+    /* Center canvas on the page and give a neutral background */
+    html,body { height:100%; margin:0; display:flex; align-items:center; justify-content:center; background:#f2f2f2; }
+    canvas { background:#ffffff; border:1px solid #ccc; }
+    /* Small caption area */
+    #info { position:fixed; top:8px; left:8px; font-family:monospace; font-size:12px; color:#333; }
+  </style>
+</head>
+<body>
+  <div id="info">Hierarchical multi-joint arm — Base rotates, elbow rotates relative to base.</div>
+  <!-- Canvas where we draw the scene -->
+  <canvas id="canvas" width="800" height="600"></canvas>
+
+<script>
+/*
+  Multi-joint Arm — Hierarchical modelling using HTML5 Canvas 2D.
+  - Demonstrates parent/child transforms with canvas save/restore.
+  - All transformations are in local space of each part.
+  - The child inherits the transformed coordinate system of the parent.
+  - Lines are commented line-by-line to be explicit and educational.
+*/
+
+/* ---------- Utility helpers ---------- */
+
+// convert degrees to radians (convenience)
+function degToRad(deg) {
+  return deg * Math.PI / 180;
+}
+
+/* ---------- Canvas setup ---------- */
+
+// get canvas and 2D rendering context
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+// choose a logical origin for the scene (center bottom-ish)
+const ORIGIN_X = canvas.width / 2;   // center horizontally
+const ORIGIN_Y = canvas.height * 0.75; // 3/4 down the canvas
+
+// visual parameters for arm segments
+const UPPER_ARM_LENGTH = 160;  // length of first segment (px)
+const LOWER_ARM_LENGTH = 120;  // length of second segment (px)
+const HAND_LENGTH      = 40;   // length of third segment (px)
+const ARM_THICKNESS    = 18;   // rectangle thickness for drawing
+
+/* ---------- Animation / state variables ---------- */
+
+// joint angles (in degrees for readability)
+let baseAngle   = 20;   // rotation of the base (shoulder) relative to world
+let elbowAngle  = -30;  // rotation of the elbow relative to upper arm
+let wristAngle  = 20;   // rotation of the wrist relative to forearm
+
+// angular velocities (degrees per second) for simple animation
+let baseSpeed  = 10;    // degrees/second
+let elbowSpeed = 30;    // degrees/second
+let wristSpeed = -60;   // degrees/second
+
+// timestamp of previous frame (for time-based animation)
+let lastTime = null;
+
+/* ---------- Drawing helpers (explicit) ---------- */
+
+/**
+ * drawRectCentered(length, thickness)
+ * - draws a rectangle whose left edge is at the local origin (x=0)
+ *   and extends positively along the local +X axis.
+ * - The rectangle is vertically centered around the local X axis.
+ * - This makes it convenient: translate to joint, rotate, then draw.
+ */
+function drawRectAlongX(length, thickness) {
+  // save context state before we draw the part
+  ctx.save();
+
+  // rectangle's top-left in the local space is at (0, -thickness/2)
+  // we will stroke and fill to make the segment visible
+  ctx.beginPath();
+  ctx.rect(0, -thickness/2, length, thickness);
+  ctx.fill();
+  ctx.stroke();
+
+  // restore to previous state (not strictly necessary here because we
+  // do this in caller, but safe in case of accidental additions)
+  ctx.restore();
+}
+
+/* ---------- Scene rendering ---------- */
+
+function renderScene(deltaSeconds) {
+  // clear whole canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // draw a simple ground line for reference (world space)
+  ctx.save();
+  ctx.strokeStyle = "#888";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, ORIGIN_Y + 60);
+  ctx.lineTo(canvas.width, ORIGIN_Y + 60);
+  ctx.stroke();
+  ctx.restore();
+
+  // update joint angles based on speeds and elapsed time
+  baseAngle  += baseSpeed  * deltaSeconds;
+  elbowAngle += elbowSpeed * deltaSeconds;
+  wristAngle += wristSpeed * deltaSeconds;
+
+  // limit angles to sensible ranges (optional)
+  // baseAngle = ((baseAngle + 180) % 360) - 180; // keep between -180..180
+
+  // set common drawing styles
+  ctx.fillStyle = "#eee";
+  ctx.strokeStyle = "#333";
+  ctx.lineWidth = 2;
+
+  // Move to the world origin where the base of the arm is located.
+  ctx.save();                              // push world state onto stack
+  ctx.translate(ORIGIN_X, ORIGIN_Y);       // world -> base position
+
+  // Draw base pivot (small circle) in world space to show origin
+  ctx.save();
+    ctx.fillStyle = "#444";
+    ctx.beginPath();
+    ctx.arc(0, 0, 6, 0, Math.PI * 2);
+    ctx.fill();
+  ctx.restore();
+
+  // ---------- Base / Upper arm ----------
+  // The upper arm's transform is computed relative to the world/origin.
+  // Rotating the base rotates all children because we do this before drawing children.
+  ctx.save();                              // push before applying base transform
+    ctx.rotate(degToRad(baseAngle));       // apply base rotation (shoulder)
+
+    // draw upper arm segment (in its local coordinates)
+    ctx.fillStyle = "#cce6ff";             // light color for upper arm
+    ctx.strokeStyle = "#1a4f73";
+    drawRectAlongX(UPPER_ARM_LENGTH, ARM_THICKNESS);
+
+    // draw a visual joint at the elbow (end of upper arm)
+    ctx.save();
+      ctx.translate(UPPER_ARM_LENGTH, 0);  // move to elbow local origin
+      ctx.beginPath();
+      ctx.fillStyle = "#333";
+      ctx.arc(0, 0, 5, 0, Math.PI * 2);
+      ctx.fill();
+    ctx.restore();
+
+    // ---------- Forearm (child of upper arm) ----------
+    // Note: Because we translated to the elbow, all transforms here are local to elbow.
+    ctx.save();                            // push before elbow transform
+      ctx.translate(UPPER_ARM_LENGTH, 0);  // move to elbow pivot (local to upper arm)
+      ctx.rotate(degToRad(elbowAngle));    // rotate forearm relative to upper arm
+
+      // draw forearm segment
+      ctx.fillStyle = "#ffd9b3";           // different color for contrast
+      ctx.strokeStyle = "#b36b1a";
+      drawRectAlongX(LOWER_ARM_LENGTH, ARM_THICKNESS * 0.9);
+
+      // draw elbow joint marker at end of forearm
+      ctx.save();
+        ctx.translate(LOWER_ARM_LENGTH, 0); // move to wrist location
+        ctx.beginPath();
+        ctx.fillStyle = "#222";
+        ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+      ctx.restore();
+
+      // ---------- Hand (child of forearm) ----------
+      // Hand transforms are relative to the forearm; inherit both previous transforms.
+      ctx.save();                          // push before wrist transform
+        ctx.translate(LOWER_ARM_LENGTH, 0); // move to wrist pivot
+        ctx.rotate(degToRad(wristAngle));   // rotate the hand relative to forearm
+
+        // draw hand segment (short)
+        ctx.fillStyle = "#d1e7b9";
+        ctx.strokeStyle = "#496b2f";
+        drawRectAlongX(HAND_LENGTH, ARM_THICKNESS * 0.7);
+
+        // draw fingertip or tool at end
+        ctx.save();
+          ctx.translate(HAND_LENGTH, 0);
+          ctx.beginPath();
+          ctx.fillStyle = "#000";
+          ctx.arc(0, 0, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        ctx.restore();
+
+      ctx.restore(); // end hand
+    ctx.restore();   // end forearm
+  ctx.restore();     // end upper arm
+  ctx.restore();     // restore world state (pop origin transform)
+}
+
+/* ---------- Main animation loop ---------- */
+
+function animate(timestamp) {
+  // timestamp is in milliseconds
+  if (!lastTime) lastTime = timestamp;           // initialize on first frame
+  const deltaMs = timestamp - lastTime;          // ms since last frame
+  const deltaSeconds = deltaMs / 1000;           // convert to seconds
+  lastTime = timestamp;                          // update for next frame
+
+  // render scene given elapsed time
+  renderScene(deltaSeconds);
+
+  // request next frame
+  requestAnimationFrame(animate);
+}
+
+/* ---------- Start animation ---------- */
+
+// set some stroke/fill defaults for better visuals
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+
+// kick off the animation loop
+requestAnimationFrame(animate);
+
+/* ---------- Optional: simple mouse interaction to change base angle ---------- */
+
+// click-and-drag to rotate base manually (demonstrates local->world coordination)
+let dragging = false;
+
+canvas.addEventListener('mousedown', function(e) {
+  dragging = true;
+});
+
+canvas.addEventListener('mouseup', function(e) {
+  dragging = false;
+});
+
+canvas.addEventListener('mousemove', function(e) {
+  if (!dragging) return;
+  // compute mouse position relative to the base origin
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left - ORIGIN_X;
+  const my = e.clientY - rect.top  - ORIGIN_Y;
+  // angle from origin to mouse in degrees
+  const angle = Math.atan2(my, mx) * 180 / Math.PI;
+  baseAngle = angle; // set base angle directly
+});
+</script>
+</body>
+</html>

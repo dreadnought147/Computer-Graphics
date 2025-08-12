@@ -274,6 +274,35 @@ graphics.fillOval(150,((30+24)+((vr*2))*i)+globy,
                 vr
 )
 
+graphics.closePath()
+
+/// draw heart
+// Bezier cURVES
+graphics.beginPath();
+const globalx = 300;
+const globaly = 300;
+
+graphics.moveTo(150+globalx,globaly+280)
+graphics.bezierCurveTo(
+            150,300,
+                        400,220,
+                            globalx+150,globaly+100
+);
+
+graphics.moveTo(150+globalx,globaly+280)
+
+graphics.bezierCurveTo(
+                 globalx+450,300,
+
+                globalx+200,220,
+
+                 globalx+150,globaly+100
+);
+graphics.fill()
+graphics.stroke()
+   
+
+
 
 
     }
