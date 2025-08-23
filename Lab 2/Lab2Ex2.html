@@ -28,14 +28,103 @@
     /**
      *  Builds the data structure that represents the entire picture.
      */
+
+let obj1,obj2;
+ function drawMasterObj(barc, basec ){
+
+    //DEFIINING OUR WHEEL 
+         const wheel = new SceneGraphNode();
+        wheel.doDraw = ctx =>{
+              ctx.save();
+        ctx.scale(5,5);
+        ctx.strokeStyle = "black"
+        console.log("object");
+        ctx.fillStyle = "white"
+        //draw the circle
+        ctx.beginPath();
+    ctx.arc(0, 0, 0.5, 0, 2 * Math.PI); // Diameter 1
+    ctx.stroke();
+       for (let i =0; i< 10; i++){
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.lineTo(0.5*Math.cos(i*2*Math.PI/10), 0.5*Math.sin(i*2*Math.PI/10));
+        ctx.stroke()
+       }
+      
+       ctx.restore();
+        }
+        //DEFINING OUR TRAINGEL
+        const filledT = new SceneGraphNode();
+    filledT.doDraw = ctx => {
+        ctx.beginPath();
+        ctx.moveTo(0, 0.5);
+        ctx.lineTo(0.5, -0.5);
+        ctx.lineTo(-0.5, -0.5);
+        ctx.closePath();
+        ctx.fill();
+    };
+        const trian = filledT.setColor(basec)
+        const actualTriangle = new TransformedObject(trian).setScale(1,2).setTranslation(0.00001,1)
+
+        //Defining our bar
+        const bar_base = new SceneGraphNode();
+        bar_base.doDraw = ctx =>{
+            ctx.fillRect(-0.5, -0.5, 1, 1);
+        }
+        bar_base.setColor(barc);
+         const bar_trans = new TransformedObject(bar_base).setScale(3,0.15);
+
+        //Define our Chasis
+         const Chasis_pre = new CompoundObject()
+        const wheel1 = new TransformedObject(wheel).setScale(0.15,0.15).setTranslation(-1.45,0.0001).setRotation(45)
+        const wheel2 = new TransformedObject(wheel).setScale(0.15,0.15).setTranslation(1.45,0.0001)
+        Chasis_pre.add(wheel1);
+        Chasis_pre.add(wheel2); 
+        Chasis_pre.add(bar_trans)
+
+        const Chasis = new TransformedObject(Chasis_pre)
+            
+        
+
+
+
+        //Define our Windmill
+        const Seesaw_pre = new CompoundObject();
+        const base = new TransformedObject(actualTriangle).setTranslation(0.00001,-2)
+        Seesaw_pre.add(base);
+        Seesaw_pre.add(Chasis)
+
+        const Seesaw = new TransformedObject(Seesaw_pre);
+
+        return {
+        root: Seesaw,
+        wheel1: wheel1,  // For external rotation
+        wheel2: wheel2,
+        Chasis: Chasis  // Example: rotate whole chassis
+    };
+ }
+
     function createWorld() {
+
 
         world = new CompoundObject();  // Root node for the scene graph.
 
-        // TODO: Create objects and add them to the scene graph.
-        rotatingRect = new TransformedObject(filledRect);   // (DELETE THIS EXAMPLE)
-        rotatingRect.setScale(2,2).setColor("red"); 
-        world.add(rotatingRect);
+ // colours, rotation speed and drections
+
+obj1 = drawMasterObj("Blue", "Pink"); // Bar: Blue, Triangle: Pink
+    world.add(obj1.root.setTranslation(1, 1).setScale(0.5, 0.5));
+    obj2 = drawMasterObj("Red", "Green"); // Bar: Red, Triangle: Green
+    world.add(obj2.root.setTranslation(-1, 2).setScale(0.8, 0.8));
+     obj3 = drawMasterObj("yellow", "Blue"); // Bar: Red, Triangle: Green
+    world.add(obj3.root.setTranslation(-1, -1.0).setScale(0.8, 0.8));
+
+
+
+// const obj2 = drawMasterObj("Pink", "Pink"
+
+        // TODO: Create objects and add them to  //world.add(base)
+     
+       // world.add(bar_trans)
     }
     
     /**
@@ -46,7 +135,20 @@
         frameNumber++;
 
         // TODO: Update state in preparation for drawing the next frame.
-        rotatingRect.setRotation(frameNumber*0.75); // (DELETE THIS EXAMPLE)
+       // rotatingRect.setRotation(frameNumber*0.75); // (DELETE THIS EXAMPLE)
+       obj1.wheel1.setRotation(frameNumber*5)
+        obj1.wheel2.setRotation(frameNumber*5)
+        obj1.Chasis.setRotation(frameNumber*-5.0)
+
+          obj2.wheel1.setRotation(frameNumber*5.7)
+        obj2.wheel2.setRotation(frameNumber*5.8)
+        obj2.Chasis.setRotation(frameNumber*5)
+
+         obj3.wheel1.setRotation(frameNumber*-5)
+        obj3.wheel2.setRotation(frameNumber*-5)
+        obj3.Chasis.setRotation(frameNumber*2)
+
+      //  wheel1.setRotation(frameNumber*5)
         
     }
  

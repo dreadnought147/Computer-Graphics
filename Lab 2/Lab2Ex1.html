@@ -13,14 +13,100 @@
     var X_RIGHT = 4;
     var Y_BOTTOM = -3;
     var Y_TOP = 3;
+    var  n=0; 
+    var ZERO = 0.00000000000001;
+    const colours = ["red", "blue", "purple", "yellow", "pink"]
     
     var BACKGROUND = "white";  // The display is filled with this color before the scene is drawn.
          
     var pixelSize;  // The size of one pixel, in the transformed coordinates.
             
     var frameNumber = 0;  // Current frame number. goes up by one in each frame.
+    n = Math.floor(Math.random() * 5);
 
     // TODO:  Define any other necessary state variables.
+    //You will first want to create a wheel, consisting of a circle and some lines
+    function drawWheelMove(x,y){ // we can parametirze the speed of each wheel so as we please just add an arguent
+        if (x && y){
+            graphics.translate(x,y)
+        }
+        graphics.save();
+        graphics.rotate((frameNumber*5) * Math.PI/180)
+        graphics.scale(1.5,1.5);
+        graphics.strokeStyle = "white"
+        graphics.fillStyle = "white"
+       circle();
+       for (let i =0; i< 10; i++){
+        graphics.beginPath();
+        graphics.moveTo(0,0);
+        graphics.lineTo(0.5*Math.cos(i*2*Math.PI/10), 0.5*Math.sin(i*2*Math.PI/10));
+        graphics.stroke()
+       }
+       
+       graphics.restore();
+
+    }
+    function drawWheel(){
+
+        graphics.save();
+        graphics.scale(5,5);
+        graphics.strokeStyle = "white"
+        graphics.fillStyle = "white"
+       circle();
+       for (let i =0; i< 10; i++){
+        graphics.beginPath();
+        graphics.moveTo(0,0);
+        graphics.lineTo(0.5*Math.cos(i*2*Math.PI/10), 0.5*Math.sin(i*2*Math.PI/10));
+        graphics.stroke()
+       }
+      
+       graphics.restore();
+    }
+function drawBar(){
+    graphics.translate(-1.5,ZERO)
+    graphics.scale(3.1,0.25)
+    graphics.save();
+    graphics.strokeStyle = "red"
+    graphics.fillStyle = "red"
+    rect();
+    filledRect();
+    graphics.restore();
+}
+function drawChasis(){
+    drawWheelMove(-1.5,ZERO); // THESE objects are relative to each other so cumulativeely, so how we transalte one object 
+                                //will dpeend on the lats drawn position of the previous object
+        drawWheelMove(3,ZERO); // so we need to translate the second object relative to the first object   
+        
+        //the red bar  //note next drawn object will be relative to the last drawn object
+       drawBar();
+}
+
+function rotatingChasis(){
+    graphics.save();
+      // graphics.translate(-1,-1)
+       graphics.rotate((frameNumber*3) * Math.PI/180) // WE PUT RADIANS INTO THE PAARMERER
+       drawChasis()
+       graphics.restore()
+}
+
+function triangle(){
+  
+    graphics.save()
+ graphics.translate(ZERO,-1.9)
+ graphics.scale(0.5,1.9)
+    graphics.fillStyle = colours[n]
+    filledTriangle(graphics)
+    graphics.restore()
+}
+function drawSeeSaw(/*position */x,y , /*scale*/ sx,sy){
+    graphics.save()
+    graphics.translate(x,y)
+    graphics.scale(sx,sy)
+    rotatingChasis()
+    triangle()
+    graphics.restore()
+     
+}
     
     /**
      *  Responsible for drawing the entire scene.  The display is filled with the background
@@ -29,8 +115,23 @@
     function drawWorld() {
 
         // TODO: Draw the content of the scene.
-        rotatingRect();  // (DELETE THIS EXAMPLE)
+    
+   // graphics.translate(-1,-1);
+    // rotatingRect();  // (DELETE THIS EXAMPLE)
+     // 0..4 inclusive
+     n = Math.floor(Math.random() * 5);
+  drawSeeSaw(ZERO+1,-1, 0.6,0.85)
+ 
+  drawSeeSaw(-2.36,ZERO, 0.45,0.75)
+  drawSeeSaw(ZERO,2, 0.5,0.85)
+  //drawWheelMove()
 
+       // first wheel at 0,0
+     
+       
+       
+       
+        
     }
     
     /**
@@ -104,7 +205,7 @@
       */
     function draw() {
         graphics.save();  // to make sure changes don't carry over from one call to the next
-        graphics.fillStyle = BACKGROUND;  // background color
+        graphics.fillStyle = "black";  // background color
         graphics.fillRect(0,0,canvas.width,canvas.height);
         graphics.fillStyle = "black";
         applyLimits(graphics,X_LEFT,X_RIGHT,Y_TOP,Y_BOTTOM,false);
